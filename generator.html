@@ -2,6 +2,58 @@
 </pre>
 
 <script>
+    const pref =
+'<style>\n' +
+'    .test-gallery {\n' +
+'        display: flex;\n' +
+'        /* Enables Flexbox */\n' +
+'        flex-wrap: wrap;\n' +
+'        /* Allows items to wrap to the next line */\n' +
+'        justify-content: space-around;\n' +
+'        /* Distributes space around items */\n' +
+'        align-items: center;\n' +
+'        /* Vertically centers items in their container */\n' +
+'    }\n' +
+'\n' +
+'    #test-gallery a {\n' +
+'        display: flex;\n' +
+'        flex-direction: column;\n' +
+'        align-items: center;\n' +
+'        text-decoration: none;\n' +
+'        margin: 10px;\n' +
+'        /* Adds space between the links */\n' +
+'        border: 1px solid #ccc;\n' +
+'        /* Optional border for clarity */\n' +
+'        padding: 10px;\n' +
+'        /* Padding inside each link */\n' +
+'    }\n' +
+'\n' +
+'    .date {\n' +
+'        margin-top: 8px;\n' +
+'        font-size: 14px;\n' +
+'        color: #333;\n' +
+'    }\n' +
+'</style>\n' +
+'\n' +
+'<script src="https://faithfullyspeaking.s3.amazonaws.com/photoswipe.umd.min.js"><\/script>\n' +
+'<script src="https://faithfullyspeaking.s3.amazonaws.com/photoswipe-lightbox.umd.min.js"><\/script>\n' +
+'<link href="https://faithfullyspeaking.s3.amazonaws.com/photoswipe.css" rel="stylesheet" />\n' +
+'<div class="test-gallery" id="test-gallery">\n';
+
+
+    const suf =
+'</div>\n' +
+'<script type="text\/javascript">\n' +
+'    var lightbox = new PhotoSwipeLightbox({\n' +
+'        gallery: ".test-gallery",\n' +
+'        children: "a",\n' +
+'        // dynamic import is not supported in UMD version\n' +
+'        pswpModule: PhotoSwipe\n' +
+'    });\n' +
+'    lightbox.init();\n' +
+'<\/script>\n';
+
+
     function extractDimensions(text) {
         const pattern = /DIMENSIONS: (\d+)W x (\d+)H/;
         const match = text.match(pattern);
@@ -38,6 +90,7 @@
             const images = doc.querySelectorAll('#tab-yourlibrary img');
 
             const table = document.getElementById('imageTable');
+            table.textContent += pref;
 
             images.forEach(img => {
                 title = img.title;
@@ -58,9 +111,9 @@
                 } else {
                     table.textContent += `<a data-cropped="true" href="${img.src}"><img alt="" src="${img.src}" width="200" /><span class="date">${modified}</span></a>\n`;
                 }
-
             });
 
+            table.textContent += suf;
         } catch (error) {
             console.error('Failed to fetch or parse the content:', error);
         }
