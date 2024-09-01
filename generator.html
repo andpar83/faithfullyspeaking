@@ -1,0 +1,71 @@
+<pre id="imageTable">
+</pre>
+
+<script>
+    function extractDimensions(text) {
+        const pattern = /DIMENSIONS: (\d+)W x (\d+)H/;
+        const match = text.match(pattern);
+
+        if (match) {
+            const width = parseInt(match[1], 10); // Convert the width to an integer
+            const height = parseInt(match[2], 10); // Convert the height to an integer
+            return { width, height };
+        } else {
+            return null; // Return null if no match is found
+        }
+    }
+
+    function extractModified(text) {
+        const pattern = /MODIFIED: (\d{4}-\d{2}-\d{2})/;
+        const match = text.match(pattern);
+
+        if (match) {
+            return match[1];
+        } else {
+            return null; // Return null if no match is found
+        }
+    }
+
+
+    // Function to fetch the HTML content from the given URL
+    async function fetchAndDisplayImages() {
+        const url = 'https://faithfullyspeaking.org/index.cgi?action=browse&_=1725141097261&CKEditor=content&CKEditorFuncNum=2&langCode=en';
+        try {
+            const response = await fetch(url);
+            const text = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(text, 'text/html');
+            const images = doc.querySelectorAll('#tab-yourlibrary img');
+
+            const table = document.getElementById('imageTable');
+
+            images.forEach(img => {
+                title = img.title;
+                /*
+                Returned images like this:
+
+                <img src="/imageuploads/8001255/35D22343-1BD5-40DD-A556-8FAA4482A69D.jpeg?_=1656439887" width=100 title="FILE NAME: 35D22343-1BD5-40DD-A556-8FAA4482A69D.jpeg
+                FILE SIZE: 331.1 KB
+                MODIFIED: 2022-06-28
+                DIMENSIONS: 1240W x 633H">
+                */
+
+                const dimensions = extractDimensions(title);
+                const modified = extractModified(title);
+
+                if (dimensions) {
+                    table.textContent += `<a data-cropped="true" data-pswp-height="${dimensions.height}" data-pswp-width="${dimensions.width}" href="${img.src}"><img alt="" src="${img.src}" width="200" /><span class="date">${modified}</span></a>\n`;
+                } else {
+                    table.textContent += `<a data-cropped="true" href="${img.src}"><img alt="" src="${img.src}" width="200" /><span class="date">${modified}</span></a>\n`;
+                }
+
+            });
+
+        } catch (error) {
+            console.error('Failed to fetch or parse the content:', error);
+        }
+    }
+
+    // Call the function when the page is loaded
+    window.onload = fetchAndDisplayImages;
+</script>
