@@ -1,7 +1,29 @@
+<button onclick="copyToClipboard()">Copy Gallery</button>
 <pre id="imageTable">
 </pre>
 
 <script>
+    function copyToClipboard() {
+        // Get the text content from the div
+        var contentToCopy = document.getElementById('imageTable').textContent;
+
+        // Create a temporary textarea element to help with copying text
+        var textarea = document.createElement('textarea');
+        textarea.textContent = contentToCopy;
+        document.body.appendChild(textarea);
+
+        // Select and copy the text
+        textarea.select();
+        document.execCommand('copy');
+
+        // Clean up: remove the temporary textarea
+        document.body.removeChild(textarea);
+
+        // Optional: alert the user that text has been copied
+        alert('Content copied to clipboard!');
+    }
+
+
     const pref =
 '<style>\n' +
 '    .test-gallery {\n' +
